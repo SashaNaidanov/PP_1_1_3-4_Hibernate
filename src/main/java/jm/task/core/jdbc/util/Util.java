@@ -3,10 +3,12 @@ package jm.task.core.jdbc.util;
 import jm.task.core.jdbc.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public final class Util {
 
@@ -15,6 +17,12 @@ public final class Util {
     private static final String USERNAME = "root";
 
     private static final String PASSWORD = "root";
+
+    private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+
+    private static final String DIALECT = "org.hibernate.dialect.MySQLDialect";
+
+    private static final String CURRENT_SESSION_CONTEXT_CLASS = "thread";
 
     private Util() {
 
@@ -29,7 +37,15 @@ public final class Util {
     }
 
     public static SessionFactory getSessionFactory() {
-        Configuration configuration = new Configuration().addAnnotatedClass(User.class);
+        Properties properties = new Properties();
+        properties.setProperty(Environment.DRIVER, DRIVER_CLASS);
+        properties.setProperty(Environment.URL, URL);
+        properties.setProperty(Environment.USER, USERNAME);
+        properties.setProperty(Environment.PASS, PASSWORD);
+        properties.setProperty(Environment.DIALECT, DIALECT);
+        properties.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, CURRENT_SESSION_CONTEXT_CLASS);
+        Configuration configuration = new Configuration();
+        configuration.addProperties(properties).addAnnotatedClass(User.class);
         try {
             return configuration.buildSessionFactory();
         } catch (Exception e) {
